@@ -11,11 +11,14 @@ npm install react-native-auto-layout-height-image
 ## Usage
 
 ```js
-import { multiply } from "react-native-auto-layout-height-image";
+import { AutoHeightImage } from "react-native-auto-layout-height-image";
 
 // ...
 
-const result = await multiply(3, 7);
+return (
+    <AutoHeightImage
+       source={{uri: 'https://example.com/hoge.png'}}/>
+)
 ```
 
 ## Contributing
