@@ -1,28 +1,34 @@
 import React, { useEffect, useState } from 'react';
-import { Image, ImageProps, ImageURISource } from 'react-native';
+import { Image, ImageProps, ImageURISource, ImageResolvedAssetSource } from 'react-native';
 
 export const AutoHeightImage: React.FC<ImageProps> = (props) => {
   const [imageWidth, setImageWidth] = useState<number>(0);
   const [height, setHeight] = useState<number>(0);
 
+  const calcHeight = (srcWidth, srcHeight): void => {
+    const optimizeHeight = srcHeight * (imageWidth / srcWidth);
+    if (optimizeHeight !== 0) {
+        setHeight(optimizeHeight);
+    }
+  }
+  
   useEffect(() => {
     const uri = (props.source as ImageURISource).uri;
     if (uri === undefined) {
-      setHeight(100);
-      return;
+        const srcImage: ImageResolvedAssetSource = Image.resolveAssetSource(props.source);
+        calcHeight(srcImage.width, srcImage.height);
     }
-    Image.getSize(
-      uri,
-      (srcWidth, srcHeight) => {
-        const optimizeHeight = srcHeight * (imageWidth / srcWidth);
-        if (optimizeHeight !== 0) {
-          setHeight(optimizeHeight);
-        }
-      },
-      () => {
-        setHeight(100);
-      }
-    );
+    else{
+        Image.getSize(
+            uri,
+            (srcWidth, srcHeight) => {
+                calcHeight(srcWidth, srcHeight);
+            },
+            () => {
+                setHeight(100);
+            }
+        );	
+    }
   }, [props.source, imageWidth]);
 
   return (
